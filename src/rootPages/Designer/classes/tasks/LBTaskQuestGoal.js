@@ -1,24 +1,19 @@
-// LBTaskUseItem
+// LBTaskQuestGoal
 //
-// A UseItem task will use a specified item in your inventory.
+// A QuestGoal task contains child tasks that complete a particular goal.
 //
-// UseItem {
-//     $Name = "Crystal Phial";
-//     $Delay = 10000;
-//     $Times = 1;
-// }
 //
 import LBTask from "../LBTask";
 
 // this Task's unique task key
-var _key = "useitem";
+var _key = "questgoal";
 
-export default class LBTaskUseItem extends LBTask {
+export default class LBTaskQuestGoal extends LBTask {
    static get key() {
       return _key;
    }
    static get name() {
-      return "UseItem";
+      return "QuestGoal";
    }
 
    constructor(attributes, LBApp) {
@@ -55,7 +50,7 @@ Attributes:
     * @return {bool}
     */
    hasChildren() {
-      return false;
+      return true;
    }
 
    /**
@@ -63,9 +58,12 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      let name = "UseItem";
-      if (this.Name) {
-         name = `${name} (${this.Name})`;
+      let name = "QuestGoal";
+      if (this.QuestName != "") {
+         name = `${name} (${this.QuestName})`;
+      }
+      if (this.ID != "") {
+         name = `${name} [${this.ID}]`;
       }
       return super.name(name);
    }
@@ -76,7 +74,7 @@ Attributes:
     * @return {obj}
     */
    propertyDescription() {
-      return "<b>UseItem</b><br>Use an item in your inventory.";
+      return "<b>QuestGoal</b><br>QuestGoal oversees the completion of a quest.";
    }
 
    /**
@@ -88,19 +86,18 @@ Attributes:
    properties() {
       var prop = super.properties();
 
-      // $Name = "Crystal Phial";
-      prop.Name = {
+      prop.cond = {
+         type: "condition",
+      };
+
+      prop.QuestName = {
+         // Quest Name
          type: "string",
       };
 
-      // $Delay = 10000;
-      prop.delay = {
-         type: "int",
-      };
-
-      // $Times = 1;
-      prop.times = {
-         type: "int",
+      prop.ID = {
+         // the ID of the quest
+         type: "string",
       };
 
       return prop;

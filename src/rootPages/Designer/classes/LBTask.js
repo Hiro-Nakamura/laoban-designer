@@ -43,8 +43,6 @@ Attributes:
             var newTask = this.LB.newTask(t);
             if (newTask) {
                this.childTask(newTask);
-               // newTask.parent = this;
-               // this._tasks.push(newTask);
             }
          });
       }

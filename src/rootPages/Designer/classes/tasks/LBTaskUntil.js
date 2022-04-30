@@ -1,24 +1,19 @@
-// LBTaskUseItem
+// LBTaskUntil
 //
-// A UseItem task will use a specified item in your inventory.
+// A Until task will loot any mobs nearby.
 //
-// UseItem {
-//     $Name = "Crystal Phial";
-//     $Delay = 10000;
-//     $Times = 1;
-// }
 //
-import LBTask from "../LBTask";
+import LBTaskCondition from "./LBTaskCondition";
 
 // this Task's unique task key
-var _key = "useitem";
+var _key = "until";
 
-export default class LBTaskUseItem extends LBTask {
+export default class LBTaskUntil extends LBTaskCondition {
    static get key() {
       return _key;
    }
    static get name() {
-      return "UseItem";
+      return "Until";
    }
 
    constructor(attributes, LBApp) {
@@ -55,7 +50,7 @@ Attributes:
     * @return {bool}
     */
    hasChildren() {
-      return false;
+      return true;
    }
 
    /**
@@ -63,11 +58,7 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      let name = "UseItem";
-      if (this.Name) {
-         name = `${name} (${this.Name})`;
-      }
-      return super.name(name);
+      return super.name("Until");
    }
 
    /**
@@ -76,7 +67,7 @@ Attributes:
     * @return {obj}
     */
    propertyDescription() {
-      return "<b>UseItem</b><br>Use an item in your inventory.";
+      return "<b>Until</b><br>Until perform my child tasks until my condition is true.";
    }
 
    /**
@@ -85,26 +76,16 @@ Attributes:
     * the base LBTask defines 2 common properties: .prio and .phase
     * @return {obj}
     */
-   properties() {
-      var prop = super.properties();
+   // properties() {
+   //    var prop = super.properties();
 
-      // $Name = "Crystal Phial";
-      prop.Name = {
-         type: "string",
-      };
+   //    prop.cond = {
+   //       type: "distance",
+   //       default: 30,
+   //    };
 
-      // $Delay = 10000;
-      prop.delay = {
-         type: "int",
-      };
-
-      // $Times = 1;
-      prop.times = {
-         type: "int",
-      };
-
-      return prop;
-   }
+   //    return prop;
+   // }
 
    /**
     * save

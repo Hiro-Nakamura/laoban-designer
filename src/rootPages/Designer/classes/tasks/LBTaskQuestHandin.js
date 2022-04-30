@@ -1,24 +1,19 @@
-// LBTaskUseItem
+// LBTaskQuestHandin
 //
-// A UseItem task will use a specified item in your inventory.
+// A QuestHandin task will turn in a quest.
 //
-// UseItem {
-//     $Name = "Crystal Phial";
-//     $Delay = 10000;
-//     $Times = 1;
-// }
 //
 import LBTask from "../LBTask";
 
 // this Task's unique task key
-var _key = "useitem";
+var _key = "questhandin";
 
-export default class LBTaskUseItem extends LBTask {
+export default class LBTaskQuestHandin extends LBTask {
    static get key() {
       return _key;
    }
    static get name() {
-      return "UseItem";
+      return "QuestHandin";
    }
 
    constructor(attributes, LBApp) {
@@ -63,9 +58,12 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      let name = "UseItem";
-      if (this.Name) {
-         name = `${name} (${this.Name})`;
+      let name = "QuestHandin";
+      if (this.QuestName != "") {
+         name = `${name} (${this.QuestName})`;
+      }
+      if (this.ID != "") {
+         name = `${name} [${this.ID}]`;
       }
       return super.name(name);
    }
@@ -76,7 +74,7 @@ Attributes:
     * @return {obj}
     */
    propertyDescription() {
-      return "<b>UseItem</b><br>Use an item in your inventory.";
+      return "<b>QuestHandin</b><br>QuestHandin any mobs nearby.";
    }
 
    /**
@@ -88,18 +86,28 @@ Attributes:
    properties() {
       var prop = super.properties();
 
-      // $Name = "Crystal Phial";
-      prop.Name = {
+      prop.QuestName = {
+         // Quest Name
          type: "string",
       };
 
-      // $Delay = 10000;
-      prop.delay = {
-         type: "int",
+      prop.NPC = {
+         // Name of NPC that gives quest
+         type: "name",
       };
 
-      // $Times = 1;
-      prop.times = {
+      prop.ID = {
+         // the ID of the quest
+         type: "string",
+      };
+
+      prop.location = {
+         // Location where the Quest Giver is
+         type: "location",
+      };
+
+      prop.reward = {
+         // TODO: I wonder if we can use it's Name instead
          type: "int",
       };
 

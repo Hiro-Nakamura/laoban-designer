@@ -8,21 +8,7 @@ import FUIClass from "./lb_class";
 import LBApp from "./classes/LBApp";
 
 import FLBTask from "./lb_task";
-
-/// Replace these with actual SubPages:
-const MockSubPage = {
-   ui: () => {
-      return {};
-   },
-   init: () => {},
-   show: () => {},
-   on: () => {},
-   method: () => {},
-};
-
-const SubPage1 = MockSubPage;
-const SugPage2 = MockSubPage;
-//// Replace These
+import FLBCommTest from "./lb_commtest";
 
 export default function (AB) {
    LBApp.AB = AB;
@@ -30,6 +16,7 @@ export default function (AB) {
    const UIClass = FUIClass(AB);
    const uiConfig = AB.Config.uiSettings();
    const TabTasks = FLBTask(AB);
+   const TabCommTest = FLBCommTest(AB);
 
    var L = UIClass.L();
 
@@ -38,6 +25,7 @@ export default function (AB) {
          super("lb", {
             tabbar: "",
             tab_tasks: "",
+            tab_commtest: "",
          });
          this.id = this.ids.component;
          this.icon = "connectdevelop";
@@ -99,11 +87,11 @@ export default function (AB) {
                               value: L("Tasks"),
                               width: uiConfig.tabWidthMedium,
                            },
-                           // {
-                           //    id: ids.tab_query,
-                           //    value: labels.component.queryTitle,
-                           //    width: App.config.tabWidthMedium
-                           // },
+                           {
+                              id: ids.tab_commtest,
+                              value: L("Comm Test"),
+                              width: uiConfig.tabWidthMedium,
+                           },
                            // {
                            //    id: ids.tab_interface,
                            //    value: labels.component.interfaceTitle,
@@ -122,6 +110,7 @@ export default function (AB) {
                         id: ids.workspace,
                         cells: [
                            TabTasks.ui(),
+                           TabCommTest.ui(),
                            // AppQueryWorkspace.ui,
                            // AppInterfaceWorkspace.ui
                         ],
@@ -133,15 +122,6 @@ export default function (AB) {
                // }
             ],
          };
-
-         // return {
-         //    id: this.ids.component,
-         //    view: "multiview",
-         //    borderless: true,
-         //    animate: false,
-         //    // height : 800,
-         //    rows: [SubPage1.ui(), SubPage2.ui()],
-         // };
       }
 
       async init(AB) {
@@ -170,7 +150,7 @@ export default function (AB) {
          //    // pageNewTask: NewObjectPage
          // });
 
-         await Promise.all([TabTasks.init(LBApp)]);
+         await Promise.all([TabTasks.init(LBApp), TabCommTest.init(LBApp)]);
       }
 
       /**
@@ -185,6 +165,18 @@ export default function (AB) {
       show() {
          super.show();
          TabTasks.show();
+      }
+
+      tabSwitch(tabID) {
+         switch (tabID) {
+            case this.ids.tab_tasks:
+               TabTasks.show();
+               break;
+
+            case this.ids.tab_commtest:
+               TabCommTest.show();
+               break;
+         }
       }
    }
    return new LB();

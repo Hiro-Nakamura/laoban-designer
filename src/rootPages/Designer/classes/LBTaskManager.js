@@ -11,14 +11,21 @@ var AllTaskClasses = [
    require("./tasks/LBTaskSeq").default,
    require("./tasks/LBTaskWhen").default,
    require("./tasks/LBTaskDefend").default,
+   require("./tasks/LBTaskEquip").default,
    require("./tasks/LBTaskHarvest").default,
    require("./tasks/LBTaskHotspots").default,
    require("./tasks/LBTaskLoot").default,
    require("./tasks/LBTaskMail").default,
    require("./tasks/LBTaskPull").default,
+   require("./tasks/LBTaskQuestGoal").default,
+   require("./tasks/LBTaskQuestHandin").default,
+   require("./tasks/LBTaskQuestPickup").default,
    require("./tasks/LBTaskRest").default,
+   require("./tasks/LBTaskTrain").default,
+   require("./tasks/LBTaskUntil").default,
    require("./tasks/LBTaskUseItem").default,
    require("./tasks/LBTaskVendor").default,
+   require("./tasks/LBTaskWalk").default,
 ];
 
 // import ABViewFormText from "./views/ABViewFormText"

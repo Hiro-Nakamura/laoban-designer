@@ -58,7 +58,11 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      return super.name("Pull");
+      let name = "Pull";
+      if (this.names) {
+         name = `${name} (${this.names})`;
+      }
+      return super.name(name);
    }
 
    /**

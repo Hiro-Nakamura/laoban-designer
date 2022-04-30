@@ -1,24 +1,19 @@
-// LBTaskUseItem
+// LBTaskQuestPickup
 //
-// A UseItem task will use a specified item in your inventory.
+// A QuestPickup task will attempt to accept a quest.
 //
-// UseItem {
-//     $Name = "Crystal Phial";
-//     $Delay = 10000;
-//     $Times = 1;
-// }
 //
 import LBTask from "../LBTask";
 
 // this Task's unique task key
-var _key = "useitem";
+var _key = "questpickup";
 
-export default class LBTaskUseItem extends LBTask {
+export default class LBTaskQuestPickup extends LBTask {
    static get key() {
       return _key;
    }
    static get name() {
-      return "UseItem";
+      return "QuestPickup";
    }
 
    constructor(attributes, LBApp) {
@@ -63,9 +58,12 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      let name = "UseItem";
-      if (this.Name) {
-         name = `${name} (${this.Name})`;
+      let name = "QuestPickup";
+      if (this.QuestName != "") {
+         name = `${name} (${this.QuestName})`;
+      }
+      if (this.ID != "") {
+         name = `${name} [${this.ID}]`;
       }
       return super.name(name);
    }
@@ -76,7 +74,7 @@ Attributes:
     * @return {obj}
     */
    propertyDescription() {
-      return "<b>UseItem</b><br>Use an item in your inventory.";
+      return "<b>QuestPickup</b><br>Pickup a quest.";
    }
 
    /**
@@ -88,19 +86,36 @@ Attributes:
    properties() {
       var prop = super.properties();
 
-      // $Name = "Crystal Phial";
-      prop.Name = {
+      // we can gain quests from npc, object or items
+
+      prop.QuestName = {
+         // Quest Name
          type: "string",
       };
 
-      // $Delay = 10000;
-      prop.delay = {
-         type: "int",
+      prop.NPC = {
+         // Name of NPC that gives quest
+         type: "name",
       };
 
-      // $Times = 1;
-      prop.times = {
-         type: "int",
+      prop.object = {
+         // Name of Object that gives quest
+         type: "string",
+      };
+
+      prop.item = {
+         // Name of Item that gives quest
+         type: "string",
+      };
+
+      prop.ID = {
+         // the ID of the quest
+         type: "string",
+      };
+
+      prop.location = {
+         // Location where the Quest Giver is
+         type: "location",
       };
 
       return prop;

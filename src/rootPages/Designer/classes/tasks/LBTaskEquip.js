@@ -1,24 +1,19 @@
-// LBTaskUseItem
+// LBTaskEquip
 //
-// A UseItem task will use a specified item in your inventory.
+// A Equip task will loot any mobs nearby.
 //
-// UseItem {
-//     $Name = "Crystal Phial";
-//     $Delay = 10000;
-//     $Times = 1;
-// }
 //
 import LBTask from "../LBTask";
 
 // this Task's unique task key
-var _key = "useitem";
+var _key = "eqiip";
 
-export default class LBTaskUseItem extends LBTask {
+export default class LBTaskEquip extends LBTask {
    static get key() {
       return _key;
    }
    static get name() {
-      return "UseItem";
+      return "Equip";
    }
 
    constructor(attributes, LBApp) {
@@ -63,9 +58,9 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      let name = "UseItem";
-      if (this.Name) {
-         name = `${name} (${this.Name})`;
+      let name = "Equip";
+      if (this.Item) {
+         name = `${name} (${this.Item})`;
       }
       return super.name(name);
    }
@@ -76,7 +71,7 @@ Attributes:
     * @return {obj}
     */
    propertyDescription() {
-      return "<b>UseItem</b><br>Use an item in your inventory.";
+      return "<b>Equip</b><br>Equip an item in your inventory.";
    }
 
    /**
@@ -88,19 +83,8 @@ Attributes:
    properties() {
       var prop = super.properties();
 
-      // $Name = "Crystal Phial";
-      prop.Name = {
+      prop.Item = {
          type: "string",
-      };
-
-      // $Delay = 10000;
-      prop.delay = {
-         type: "int",
-      };
-
-      // $Times = 1;
-      prop.times = {
-         type: "int",
       };
 
       return prop;
