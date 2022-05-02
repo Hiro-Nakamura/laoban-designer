@@ -97,12 +97,12 @@ export default function (AB) {
       }
 
       // Our init() function for setting up our UI
-      init(LB) {
+      init(LB, LBScribe) {
          this.LB = LB;
 
          // webix.extend($$(ids.form), webix.ProgressBar);
          TaskList.init(LB);
-         Properties.init(LB);
+         Properties.init(LB, LBScribe);
 
          // pass on the 'taskUpdated' event:
          Properties.on("taskUpdated", (LBTask) => {

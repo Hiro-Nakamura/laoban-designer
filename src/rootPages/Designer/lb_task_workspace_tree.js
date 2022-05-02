@@ -376,10 +376,20 @@ export default function (AB) {
          // get task's saved data & convert to JSON
          var taskData = this.CurrentTask[this.LB.fieldTaskData.columnName];
          var jsonTaskData = taskData;
-         if (typeof taskData == "string") jsonTaskData = JSON.parse(taskData);
+         if (typeof taskData == "string") {
+            if (taskData && taskData != '""') {
+               jsonTaskData = JSON.parse(taskData);
+            } else {
+               jsonTaskData = null;
+            }
+         }
 
          // if we have a valid object with a .key field:
-         if (typeof jsonTaskData == "object" && jsonTaskData.key) {
+         if (
+            jsonTaskData &&
+            typeof jsonTaskData == "object" &&
+            jsonTaskData.key
+         ) {
             // create a new LBTask from json data
             this.RootTask = this.LB.newTask(jsonTaskData);
             this.loadTaskList();

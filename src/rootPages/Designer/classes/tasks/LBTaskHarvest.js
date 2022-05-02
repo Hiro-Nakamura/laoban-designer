@@ -65,7 +65,15 @@ Attributes:
     * return a display name appropriate for this task
     */
    name() {
-      return super.name("Harvest");
+      let name = "Harvest";
+      if (this.names) {
+         if (Array.isArray(this.names)) {
+            name = `${name} (${this.names.join(", ")})`;
+         } else {
+            name = `${name} (${this.names})`;
+         }
+      }
+      return super.name(name);
    }
 
    /**

@@ -49,9 +49,11 @@ export default function (AB) {
       }
 
       // Our init() function for setting up our UI
-      init(LB) {
+      init(LB, LBScribe) {
          this.LB = LB;
          // webix.extend($$(ids.form), webix.ProgressBar);
+
+         this.LBScribe = LBScribe;
       }
 
       /**
@@ -75,7 +77,7 @@ export default function (AB) {
          this.saveCurrentEditor();
 
          this.CurrentLBTask = LBTask;
-         this.CurrentEditor = LBTask.propertyEditor();
+         this.CurrentEditor = LBTask.propertyEditor(this.LBScribe);
 
          let $component = $$(this.ids.component);
 

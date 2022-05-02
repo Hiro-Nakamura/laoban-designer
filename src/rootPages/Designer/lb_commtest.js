@@ -65,6 +65,58 @@ export default function (AB) {
                   },
                },
                {},
+               {
+                  id: "socket-key",
+                  view: "text",
+                  value: " -- no key yet --",
+               },
+               {
+                  view: "button",
+                  label: "Create Socket Room",
+                  click: async () => {
+                     this.socket = await this.LB.AB.CommCenter.Socket(
+                        "lb-test"
+                     );
+                     console.log(this.socket);
+                     $$("socket-key").setValue(this.socket.key);
+
+                     this.socket.on("client", (client) => {
+                        console.log("new client:", client);
+                        this.clients[client.id] = client;
+                        client.on("data", (req) => {
+                           console.log(`socket[${client.id}] : ${req.data}`);
+                        });
+
+                        client.on("query", (req) => {
+                           req.respond("Pong!");
+                        });
+                     });
+
+                     this.socket.on("data", (req) => {
+                        console.log(
+                           `socket room[${this.socket.clientID}] : ${req.data}`
+                        );
+                     });
+                  },
+               },
+               {
+                  view: "button",
+                  label: "Broadcast 'Hey'",
+                  click: () => {
+                     this.socket.send("Hey");
+                  },
+               },
+               {
+                  view: "button",
+                  label: "Room.Query(Ping)",
+                  click: () => {
+                     ["location", "targetLocation", "location"].forEach((c) => {
+                        this.socket.query(c).then((res) => {
+                           console.log("Query Response:", res.data);
+                        });
+                     });
+                  },
+               },
             ],
          };
       }

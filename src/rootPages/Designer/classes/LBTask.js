@@ -4,6 +4,8 @@
 //
 //
 
+const ListSeparator = "|";
+
 export default class LBTask {
    constructor(attributes, LB, key) {
       /*
@@ -58,6 +60,12 @@ Attributes:
             this[p] = attributes[p];
          }
       }
+
+      this.LBScribe = null;
+      // {lb_task_workspace.LBScribe}
+      // the PakScribe connection to our running Bot in the game.
+      // the bot can report back different information useful for
+      // our task building
    }
 
    ///
@@ -282,8 +290,11 @@ Attributes:
    /**
     * propertyEditor
     * return a webix component to display in the property Editor.
+    * @param {LBScribe} LBScribe
+    *        the connection to our PakScribe bot.
     */
-   propertyEditor() {
+   propertyEditor(LBScribe) {
+      this.LBScribe = LBScribe;
       if (!this._editor) {
          var properties = this.properties();
 
@@ -407,7 +418,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "male",
+                     icon: "fa fa-male",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitLocation(ids[name]);
@@ -416,7 +427,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "bullseye",
+                     icon: "fa fa-bullseye",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitTargetLocation(ids[name]);
@@ -439,11 +450,12 @@ Attributes:
                      label: definition.label || name,
                      value: "",
                      options: [],
+                     separator: ListSeparator,
                   },
                   {
                      view: "button",
                      type: "icon",
-                     icon: "male",
+                     icon: "fa fa-male",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitLocation(ids[name]);
@@ -452,7 +464,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "bullseye",
+                     icon: "fa fa-bullseye",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitTargetLocation(ids[name]);
@@ -477,7 +489,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "bullseye",
+                     icon: "fa fa-bullseye",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitTargetName(ids[name]);
@@ -504,7 +516,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "font",
+                     icon: "fa fa-font",
                      width: config.widthButton,
                      click: function () {
                         _logic.enterValue(ids[name]);
@@ -513,7 +525,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "bullseye",
+                     icon: "fa fa-bullseye",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitTargetName(ids[name]);
@@ -541,7 +553,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "font",
+                     icon: "fa fa-font",
                      width: config.widthButton,
                      click: function () {
                         _logic.enterValue(ids[name]);
@@ -550,7 +562,7 @@ Attributes:
                   {
                      view: "button",
                      type: "icon",
-                     icon: "male",
+                     icon: "fa fa-male",
                      width: config.widthButton,
                      click: function () {
                         _logic.unitItemPopup(ids[name]);
@@ -573,8 +585,12 @@ Attributes:
             case "itemlist":
                // these are multicombo boxes:
                var options = [];
-               value.split(",").forEach((v) => {
-                  options.push({ id: v, value: v });
+               var hash = {};
+               value.split(ListSeparator).forEach((v) => {
+                  hash[v] = v;
+               });
+               Object.keys(hash).forEach((k) => {
+                  options.push({ id: k, value: k });
                });
 
                var element = $$(ids[name]);
@@ -613,42 +629,44 @@ Attributes:
    logicUtilAddToCombo(value, ele) {
       var currValue = ele.getValue();
       if (currValue == "") currValue = [];
-      else currValue = currValue.split(",");
+      else currValue = currValue.split(ListSeparator);
 
       var options = this.logicUtilGetListOptions(ele.getList());
 
       options.push({ id: value, value: value });
 
       currValue.push(value);
-      currValue = currValue.join(",");
+      currValue = currValue.join(ListSeparator);
       ele.define("options", options);
       ele.setValue(currValue);
       ele.refresh();
    }
 
    logicUtilAddTargetData(key, ele) {
-      var uid = webix.uid();
-      var newValue = key + "[" + uid + "]";
-
-      //// TODO: implement LB.queryLive().then()
-
-      // LB.queryLive( key )
-      // .then((newValue)=>{
-
-      // we can store target data into multicombo boxes
-      if (ele.config.view == "multicombo") {
-         // if a multicombo view, then ADD the current data value to
-         // our current list.
-
-         this.logicUtilAddToCombo(newValue, ele);
-      } else {
-         // or simple textboxes
-         // if a textbox, replace our textbox with the value:
-
-         ele.setValue(newValue);
+      if (!this.LBScribe) {
+         webix.alert("No Connection to our PakBot");
+         return;
       }
 
-      // }) // end LB.queryLive()
+      if (!this.LBScribe.isConnected) {
+         webix.alert("PakBot is not currently connected");
+         return;
+      }
+
+      this.LBScribe.query(key).then((newValue) => {
+         // we can store target data into multicombo boxes
+         if (ele.config.view == "multicombo") {
+            // if a multicombo view, then ADD the current data value to
+            // our current list.
+
+            this.logicUtilAddToCombo(newValue, ele);
+         } else {
+            // or simple textboxes
+            // if a textbox, replace our textbox with the value:
+
+            ele.setValue(newValue);
+         }
+      });
    }
 
    logicAddEnterValue(_logic) {
@@ -726,7 +744,7 @@ Attributes:
          _logic.unitTargetName = (id) => {
             var ele = $$(id);
 
-            this.logicUtilAddTargetData("TargetName", ele);
+            this.logicUtilAddTargetData("targetName", ele);
          }; // end unitTargetName()
       } // end if !unitTargetName
    } // end logicAddUnitTargetName()
@@ -736,7 +754,7 @@ Attributes:
          _logic.unitLocation = (id) => {
             var ele = $$(id);
 
-            this.logicUtilAddTargetData("UnitLocation", ele);
+            this.logicUtilAddTargetData("location", ele);
          }; // end unitTargetName()
       } // end if !unitTargetName
    } // end logicAddUnitTargetName()
@@ -746,7 +764,7 @@ Attributes:
          _logic.unitTargetLocation = (id) => {
             var ele = $$(id);
 
-            this.logicUtilAddTargetData("TargetLocation", ele);
+            this.logicUtilAddTargetData("targetLocation", ele);
          }; // end unitTargetName()
       } // end if !unitTargetName
    } // end logicAddUnitTargetName()
